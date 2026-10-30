@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holiday Overtime Pay Calculator</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 20px;
+  background: #f0f3f9;
+  font-family: Arial, sans-serif;
+  color: #17233d;
+}
+.container {
+  max-width: 500px;
+  margin: 20px auto;
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px #17233d18;
+}
+.header {
+  background: #204a9a;
+  color: white;
+  padding: 27px 22px;
+  text-align: center;
+}
+.header h1 { margin: 0 0 8px; font-size: 23px; }
+.header p { margin: 0; font-size: 13px; opacity: .85; }
+.content { padding: 23px; }
+label {
+  display: block;
+  font-weight: bold;
+  margin: 17px 0 8px;
+  font-size: 14px;
+}
+input, select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #cbd4e3;
+  border-radius: 9px;
+  font-size: 16px;
+  background: white;
+  color: #17233d;
+}
+input:focus, select:focus {
+  outline: 2px solid #4779d0;
+  border-color: #4779d0;
+}
+.hint {
+  font-size: 12px;
+  color: #68758a;
+  margin-top: 6px;
+}
+.results {
+  background: #f1f5fc;
+  border-radius: 12px;
+  padding: 17px;
+  margin-top: 23px;
+}
+.results h2 {
+  font-size: 18px;
+  margin: 0 0 15px;
+  color: #204a9a;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+.line span:last-child {
+  font-weight: bold;
+  text-align: right;
+}
+.total {
+  border-top: 2px solid #cbd6e9;
+  margin-top: 17px;
+  padding-top: 16px;
+}
+.total .amount {
+  color: #167443;
+  font-size: 27px;
+  font-weight: bold;
+}
+button {
+  width: 100%;
+  border: none;
+  border-radius: 9px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+}
+.reset {
+  background: #e7edf7;
+  color: #204a9a;
+}
+button:hover { opacity: .85; }
+.note {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #6c7789;
+  margin-top: 18px;
+}
+.footer {
+  text-align: center;
+  padding: 15px;
+  background: #f7f8fb;
+  font-size: 11px;
+  color: #788397;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>HOLIDAY & OVERTIME</h1>
+    <p>PHILIPPINES • PAY CALCULATOR</p>
+  </div>
+
+  <div class="content">
+
+    <label for="daily">Daily Basic Wage (₱)</label>
+    <input type="number" id="daily" value="600" min="0" step="0.01">
+
+    <label for="holiday">Select Holiday Type</label>
+    <select id="holiday">
+      <option value="regular">Regular Holiday (200%)</option>
+      <option value="regularRest">Regular Holiday + Rest Day (260%)</option>
+      <option value="special">Special Non-Working Holiday (130%)</option>
+      <option value="specialRest">Special Holiday + Rest Day (150%)</option>
+    </select>
+
+    <label for="hours">Total Hours Worked</label>
+    <input type="number" id="hours" value="10" min="0" max="24" step="0.25">
+    <div class="hint">First 8 hours = regular work. Beyond 8 hours = overtime.</div>
+
+    <div class="results">
+      <h2>PAY COMPUTATION</h2>
+
+      <div class="line">
+        <span>Hourly Basic Rate</span>
+        <span id="hourly">₱75.00</span>
+      </div>
+
+      <div class="line">
+        <span>Holiday Rate</span>
+        <span id="holidayRate">200%</span>
+      </div>
+
+      <div class="line">
+        <span>Overtime Rate</span>
+        <span id="otRate">260%</span>
+      </div>
+
+      <hr style="border:0;border-top:1px solid #d2dceb">
+
+      <div class="line">
+        <span>Regular Hours</span>
+        <span id="regularHours">8 hours</span>
+      </div>
+
+      <div class="line">
+        <span>Overtime Hours</span>
+        <span id="otHours">2 hours</span>
+      </div>
+
+      <div class="line">
+        <span>Holiday Pay</span>
+        <span id="basicPay">₱1,200.00</span>
+      </div>
+
+      <div class="line">
+        <span>Overtime Pay</span>
+        <span id="overtimePay">₱390.00</span>
+      </div>
+
+      <div class="total">
+        <div class="line">
+          <strong>TOTAL PAY</strong>
+        </div>
+        <div class="amount" id="total">₱1,590.00</div>
+      </div>
+    </div>
+
+    <button class="reset" onclick="resetCalculator()">RESET CALCULATOR</button>
+
+    <div class="note">
+      <strong>Formula:</strong><br>
+      Hourly Rate = Daily Wage ÷ 8<br>
+      Holiday Pay = Hourly Rate × Holiday Multiplier × Regular Hours<br>
+      Overtime Pay = Hourly Rate × Overtime Multiplier × Overtime Hours<br><br>
+      This calculator assumes work performed on the selected holiday and excludes separate unworked holiday pay, night shift differential, allowances and deductions. Actual entitlement may depend on the applicable DOLE rules and employee circumstances.
+    </div>
+
+  </div>
+
+  <div class="footer">
+    PHILIPPINE HOLIDAY PAY CALCULATOR
+  </div>
+</div>
+
+<script>
+const rates = {
+  regular: {
+    holiday: 2.00,
+    overtime: 2.60
+  },
+  regularRest: {
+    holiday: 2.60,
+    overtime: 3.38
+  },
+  special: {
+    holiday: 1.30,
+    overtime: 1.69
+  },
+  specialRest: {
+    holiday: 1.50,
+    overtime: 1.95
+  }
+};
+
+function money(value) {
+  return value.toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 2
+  });
+}
+
+function calculate() {
+  const daily = Number(document.getElementById("daily").value);
+  const hours = Number(document.getElementById("hours").value);
+  const holiday = document.getElementById("holiday").value;
+
+  if (
+    !Number.isFinite(daily) ||
+    !Number.isFinite(hours) ||
+    daily < 0 ||
+    hours < 0 ||
+    hours > 24
+  ) {
+    document.getElementById("total").textContent = "Invalid input";
+    return;
+  }
+
+  const hourly = daily / 8;
+  const regularHours = Math.min(hours, 8);
+  const overtimeHours = Math.max(hours - 8, 0);
+
+  const holidayRate = rates[holiday].holiday;
+  const otRate = rates[holiday].overtime;
+
+  const basicPay = hourly * holidayRate * regularHours;
+  const overtimePay = hourly * otRate * overtimeHours;
+  const total = basicPay + overtimePay;
+
+  document.getElementById("hourly").textContent =
+    money(hourly);
+
+  document.getElementById("holidayRate").textContent =
+    (holidayRate * 100) + "%";
+
+  document.getElementById("otRate").textContent =
+    (otRate * 100) + "%";
+
+  document.getElementById("regularHours").textContent =
+    regularHours + " hours";
+
+  document.getElementById("otHours").textContent =
+    overtimeHours + " hours";
+
+  document.getElementById("basicPay").textContent =
+    money(basicPay);
+
+  document.getElementById("overtimePay").textContent =
+    money(overtimePay);
+
+  document.getElementById("total").textContent =
+    money(total);
+}
+
+function resetCalculator() {
+  document.getElementById("daily").value = 600;
+  document.getElementById("hours").value = 10;
+  document.getElementById("holiday").value = "regular";
+  calculate();
+}
+
+// Automatically calculate whenever inputs change.
+document.getElementById("daily").addEventListener("input", calculate);
+document.getElementById("hours").addEventListener("input", calculate);
+document.getElementById("holiday").addEventListener("change", calculate);
+
+// Initial calculation
+calculate();
+</script>
+
+</body>
+</html>
