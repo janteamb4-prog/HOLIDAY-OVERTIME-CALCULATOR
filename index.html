@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Philippines holiday and overtime pay calculator using standard DOLE multipliers.">
+  <title>Philippines Holiday Pay & Overtime Calculator</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#18263b;background:#f1f5fb;font-synthesis:none}*{box-sizing:border-box}body{margin:0;padding:32px 16px}.container{max-width:760px;margin:auto}.panel{background:white;border:1px solid #dce4f0;border-radius:18px;padding:28px;box-shadow:0 12px 40px #24395a12}h1{font-size:clamp(1.5rem,4vw,2.2rem);margin:0 0 8px}.sub{color:#607086;margin:0 0 28px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{margin:0 0 20px}label,.field legend{display:block;font-weight:650;margin-bottom:9px}input[type=number],select{width:100%;padding:12px 14px;border:1px solid #b9c7da;border-radius:10px;font:inherit;background:#fff;color:#18263b}input:focus,select:focus{outline:3px solid #c5d8ff;border-color:#2456ae}.check{display:flex;align-items:center;gap:10px;font-weight:500;margin:0 0 19px}.check input{width:18px;height:18px;accent-color:#2856a5}.results{background:#eef4ff;border-radius:14px;padding:22px;margin-top:10px}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;color:#526a91;font-weight:700}.total{font-size:clamp(2rem,6vw,3rem);font-weight:800;color:#16439a;margin:8px 0 20px;overflow-wrap:anywhere}.line{display:flex;justify-content:space-between;gap:15px;border-top:1px solid #d3e0f5;padding:12px 0}.line strong{text-align:right}.formula{font-size:.88rem;color:#4f6077;line-height:1.7}.note{font-size:.85rem;line-height:1.6;color:#586b81;margin:20px 0 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}button{padding:11px 18px;border-radius:10px;border:1px solid #b6c8e5;background:white;color:#214c91;font:inherit;font-weight:650;cursor:pointer}button:hover{background:#eaf1fc}.warning{color:#a13b28;font-size:.85rem;min-height:1.3em}footer{text-align:center;color:#718198;font-size:.8rem;margin:20px 0}@media(max-width:520px){.panel{padding:20px}.grid{grid-template-columns:1fr;gap:0}}@media print{body{background:white}.panel{box-shadow:none}button{display:none}}
+  </style>
+</head>
+<body>
+<main class="container">
+  <section class="panel" aria-labelledby="heading">
+    <h1 id="heading">🇵🇭 Holiday Pay & Overtime Calculator</h1>
+    <p class="sub">Philippines • Philippine pesos (PHP) • Standard 8-hour workday</p>
+    <div class="field"><label for="daily">Basic daily wage (₱)</label><input id="daily" type="number" min="0" step="0.01" value="800" inputmode="decimal"></div>
+    <div class="field"><label for="type">Day classification</label><select id="type"><option value="ordinary">Ordinary working day</option><option value="regular" selected>Regular holiday (e.g., November 30)</option><option value="special">Special non-working day (e.g., November 1–2)</option></select></div>
+    <label class="check"><input type="checkbox" id="rest"> This is also my scheduled rest day</label>
+    <label class="check"><input type="checkbox" id="worked" checked> I worked on this day</label>
+    <div class="grid" id="hoursSection"><div class="field"><label for="hours">Regular hours worked (up to 8)</label><input id="hours" type="number" min="0" max="8" step="0.25" value="8" inputmode="decimal"></div><div class="field"><label for="ot">Overtime hours (beyond 8)</label><input id="ot" type="number" min="0" step="0.25" value="2" inputmode="decimal"></div></div>
+    <label class="check"><input type="checkbox" id="night"> Include night shift differential (10%, 10:00 PM–6:00 AM)</label>
+    <div id="nightSection" class="grid" hidden>
+      <div class="field"><label for="nightHours">Night hours within regular hours</label><input id="nightHours" type="number" min="0" max="8" step="0.25" value="8" inputmode="decimal"><small>Hours actually worked from 10 PM to 6 AM, excluding breaks.</small></div>
+      <div class="field"><label for="nightOT">Night hours within overtime</label><input id="nightOT" type="number" min="0" step="0.25" value="0" inputmode="decimal"><small>Part of your overtime that falls between 10 PM and 6 AM.</small></div>
+    </div>
+    <p id="warning" class="warning" role="status" aria-live="polite"></p>
+    <div class="results" aria-live="polite" aria-atomic="true"><div class="eyebrow">Estimated gross pay for the day</div><div class="total" id="total">₱0.00</div><div class="line"><span>Basic hourly rate</span><strong id="hourly"></strong></div><div class="line"><span>Regular / holiday pay</span><strong id="regularPay"></strong></div><div class="line"><span>Overtime pay</span><strong id="overtimePay"></strong></div><div class="line"><span>Night differential (regular hours)</span><strong id="nightPay"></strong></div><div class="line"><span>Night differential (overtime)</span><strong id="nightOTPay"></strong></div><div class="line"><span>Total night differential</span><strong id="nightTotal"></strong></div><div class="line"><span>Day multiplier</span><strong id="dayMultiplier"></strong></div><div class="line"><span>Overtime hourly multiplier</span><strong id="otMultiplier"></strong></div></div>
+    <p class="formula" id="formula"></p>
+    <div class="actions"><button id="reset" type="button">Reset calculator</button><button id="print" type="button">Print result</button></div>
+    <p class="note"><strong>Important:</strong> This is an estimate of gross pay before deductions. It assumes a daily-paid employee with an 8-hour basic workday and standard Philippine holiday premiums. A regular holiday not worked is paid only if eligibility conditions are met; special non-working days generally follow no-work-no-pay unless a more favorable policy applies. Night differential is calculated only on the night hours entered (10 PM–6 AM), including eligible overtime, at 10% of the applicable hourly pay. It does not automatically detect cross-midnight holiday changes, overlapping holidays, other special arrangements, or payroll deductions. For a non-worked rest day, the result is zero unless an eligible regular holiday applies. Confirm actual payroll treatment with HR or DOLE.</p>
+  </section>
+  <footer>Unofficial calculator • Not affiliated with DOLE</footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const ids=['daily','type','rest','worked','hours','ot','night','nightHours','nightOT'];
+  const el=id=>document.getElementById(id);
+  const peso=n=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(n);
+  const number=id=>Number(el(id).value);
+   function calculate(){
+     const daily=number('daily'),hours=number('hours'),ot=number('ot');
+     const worked=el('worked').checked,night=el('night').checked;
+     el('hoursSection').hidden=!worked;
+     el('nightSection').hidden=!(worked&&night);
+     const nh=number('nightHours'),not=number('nightOT');
+     const valid=[daily,hours,ot,nh,not].every(Number.isFinite)&&daily>=0&&hours>=0&&hours<=8&&ot>=0&&nh>=0&&not>=0&&(!worked||!night||(nh<=hours&&not<=ot));
+     el('warning').textContent=valid?'': 'Enter nonnegative values, regular hours from 0 to 8, night regular hours no greater than regular hours, and night overtime hours no greater than overtime hours.';
+     if(!valid){['total','hourly','regularPay','overtimePay','nightPay','nightOTPay','nightTotal','dayMultiplier','otMultiplier','formula'].forEach(id=>el(id).textContent='—');return;}
+     const type=el('type').value,rest=el('rest').checked;
+     const dayMultiplier=type==='regular'?(rest?2.6:2):type==='special'?(rest?1.5:1.3):(rest?1.3:1);
+     const overtimeFactor=type==='ordinary'&&!rest?1.25:1.3;
+     const hourly=daily/8;
+     const regular=worked?hourly*hours*dayMultiplier:(type==='regular'?daily:0);
+     const overtime=worked?hourly*ot*dayMultiplier*overtimeFactor:0;
+     const nightRegular=worked&&night?hourly*dayMultiplier*0.10*nh:0;
+     const nightOvertime=worked&&night?hourly*dayMultiplier*overtimeFactor*0.10*not:0;
+     const nightTotal=nightRegular+nightOvertime;
+     el('total').textContent=peso(regular+overtime+nightTotal);
+     el('hourly').textContent=peso(hourly);
+     el('regularPay').textContent=peso(regular);
+     el('overtimePay').textContent=peso(overtime);
+     el('nightPay').textContent=peso(nightRegular);
+     el('nightOTPay').textContent=peso(nightOvertime);
+     el('nightTotal').textContent=peso(nightTotal);
+     el('dayMultiplier').textContent=dayMultiplier.toFixed(2)+'×';
+     el('otMultiplier').textContent=(dayMultiplier*overtimeFactor).toFixed(3)+'×';
+     el('formula').textContent='Base hourly = '+peso(daily)+' ÷ 8 = '+peso(hourly)+'. Regular pay = '+peso(hourly)+' × '+dayMultiplier.toFixed(2)+' × '+(worked?hours:0)+' hours = '+peso(regular)+'. Overtime pay = '+peso(hourly)+' × '+dayMultiplier.toFixed(2)+' × '+overtimeFactor.toFixed(2)+' × '+(worked?ot:0)+' hours = '+peso(overtime)+'. Night differential (regular) = '+peso(hourly)+' × '+dayMultiplier.toFixed(2)+' × 10% × '+(worked&&night?nh:0)+' hours = '+peso(nightRegular)+'. Night differential (OT) = '+peso(hourly)+' × '+dayMultiplier.toFixed(2)+' × '+overtimeFactor.toFixed(2)+' × 10% × '+(worked&&night?not:0)+' hours = '+peso(nightOvertime)+'. Total = '+peso(regular+overtime+nightTotal)+'.';
+   }
+  ids.forEach(id=>{el(id).addEventListener('input',calculate);el(id).addEventListener('change',calculate)});
+  el('reset').addEventListener('click',()=>{el('daily').value='800';el('type').value='regular';el('rest').checked=false;el('worked').checked=true;el('hours').value='8';el('ot').value='2';el('night').checked=false;el('nightHours').value='8';el('nightOT').value='0';calculate()});
+  el('print').addEventListener('click',()=>window.print());
+  calculate();
+})();
+</script>
+</body>
+</html>
